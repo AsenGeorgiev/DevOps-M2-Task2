@@ -1,0 +1,73 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure(2) do |config|
+    
+  config.ssh.insert_key = false
+
+  config.vm.define "web" do |web|
+    web.vm.box="shekeriev/debian-11"
+    web.vm.hostname = "web"
+    web.vm.network "private_network", ip: "192.168.99.100"
+    web.vm.network "forwarded_port", guest: 80, host: 8000, auto_correct: true
+    web.vm.network "forwarded_port", guest: 8080, host: 8080, auto_correct: true
+    web.vm.provider :virtualbox do |vb|
+        vb.customize ["modifyvm", :id, "--memory", "1024"]
+    end
+
+    web.vm.provision "shell", inline: <<EOS
+echo "* Add hosts ..."
+echo "192.168.99.99 ans " >> /etc/hosts
+echo "192.168.99.100 web" >> /etc/hosts
+echo "192.168.99.101 db" >> /etc/hosts
+
+ echo "* Add any prerequisites ..."
+ apt-get update
+ apt-get install -y ca-certificates curl gnupg lsb-release git
+
+EOS
+  end
+
+  config.vm.define "db" do |db|
+    db.vm.box = "shekeriev/centos-stream-9"
+    db.vm.hostname = "db"
+    db.vm.network "private_network", ip: "192.168.99.101"
+    db.vm.provision "shell", inline: <<EOS
+dnf install -y git 
+
+ echo "Adding hosts..."
+ sudo sed -i '$ a\ 192.168.99.100 ans' /etc/hosts
+ sudo sed -i '$ a\ 192.168.99.100 web' /etc/hosts
+ sudo sed -i '$ a\ 192.168.99.101 db' /etc/hosts
+
+EOS
+   end
+
+  config.vm.define "ans" do |ans|
+    ans.vm.box = "shekeriev/centos-stream-9"
+    ans.vm.hostname = "ans"
+    ans.vm.network "private_network", ip: "192.168.99.99"
+    ans.vm.synced_folder "vagrant/", "/vagrant"
+    ans.vm.provision "shell", inline: <<EOS
+dnf install -y ansible-core git
+ansible-galaxy collection install -p /usr/share/ansible/collections ansible.posix
+
+ echo "Adding webserver to hosts..."
+ sudo sed -i '$ a\ 192.168.99.100 web' /etc/hosts
+ sudo sed -i '$ a\ 192.168.99.101 db' /etc/hosts
+
+  echo "Clone gitfiles..."
+  cd /home
+  git clone https://github.com/AsenGeorgiev/DevOps-M2-Task2.git
+
+  echo "Files deployment..."
+  cd /home/DevOps-M2-Task2
+  sudo cp ansible.cfg inventory playbookweb.yml playbookdb.yml /home
+
+  echo "Execute playbook..."
+  cd /home
+  
+  ansible-playbook playbookdb.yml
+EOS
+  end
+end
