@@ -1,12 +1,11 @@
-- name: Install MariaDB
+- name: Install MySQL
   hosts: db
   become: true
 
   tasks:
-    - name: Install MariaDB
+    - name: Install MySQL
       apt:
         name:
-          - mariadb-client
-          - mariadb-common
-          - mariadb-server
+          - mysql-server
+          - python3-mysqldb
         state: present
