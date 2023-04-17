@@ -1,0 +1,11 @@
+- name: Install MariaDB
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Install MariaDB
+      apt:
+        name:
+          - mariadb-server
+          - python3-pymysql
+        state: present
