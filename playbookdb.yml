@@ -6,6 +6,7 @@
     - name: Install MariaDB
       apt:
         name:
+          - mariadb-client
+          - mariadb-common
           - mariadb-server
-          - python3-pymysql
         state: present
