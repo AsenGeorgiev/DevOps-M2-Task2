@@ -4,8 +4,9 @@
 
   tasks:
     - name: Install MySQL
-      apt:
+      yum:
         name:
+          -python3-apt
           - mysql-server
           - python3-mysqldb
         state: present
