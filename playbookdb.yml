@@ -1,12 +1,11 @@
-- name: Install MySQL
+- name: Install MariaDB
   hosts: db
   become: true
 
   tasks:
-    - name: Install MySQL
+    - name: Install MariaDB
       yum:
         name:
-          - python3-apt
-          - mysql-server
-          - python3-mysqldb
+           - mariadb-server
         state: present
+       
