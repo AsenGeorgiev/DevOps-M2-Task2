@@ -6,6 +6,7 @@
     - name: Install Nginx package
       apt:
         name: nginx
+              php
         state: present
 
     - name: Start and enable Nginx service
