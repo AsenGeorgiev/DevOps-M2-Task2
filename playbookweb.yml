@@ -15,14 +15,14 @@
         state: started
         enabled: yes
         
-- name: Copy phpfile to webserver
-  hosts: web
-  become: true
-  vars:
-    file_src: /home/
-    file_dest: /
-  tasks:
-    - name: Copy file
-      copy:
-        src: "{{ file_src }}"
-        dest: "{{ file_dest }}"
+#- name: Copy phpfile to webserver
+ # hosts: web
+  #become: true
+  #vars:
+   # file_src: /home/
+    #file_dest: /
+ # tasks:
+  #  - name: Copy file
+   #   copy:
+    #    src: "{{ file_src }}"
+     #   dest: "{{ file_dest }}"
