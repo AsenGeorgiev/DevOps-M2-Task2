@@ -6,7 +6,7 @@
     - name: Install MySQL
       yum:
         name:
-          -python3-apt
+          - python3-apt
           - mysql-server
           - python3-mysqldb
         state: present
