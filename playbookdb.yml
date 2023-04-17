@@ -1,5 +1,5 @@
 - name: Install MariaDB
-  hosts: all
+  hosts: db
   become: true
 
   tasks:
